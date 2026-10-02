@@ -30,18 +30,21 @@ The benchmarks compare line reading and simple comma-separated value splitting. 
 
 Measured on an Apple M2 with Go 1.27.0, macOS (`darwin/arm64`), and `GOMAXPROCS=8`. Times below are the median of three runs; memory figures are per operation.
 
-| Benchmark | Time (ns/op) | Bytes/op | Allocs/op |
+| Workload | Chan (ns/op) | Fetch (ns/op) | Fetch speedup |
 | --- | ---: | ---: | ---: |
-| `BenchmarkLinesChannel` | 24,781 | 4,432 | 7 |
-| `BenchmarkFetchLines` | 1,766 | 4,144 | 2 |
-| `BenchmarkCSVChannel` | 66,461 | 7,146 | 113 |
-| `BenchmarkFetchCSV` | 3,696 | 6,568 | 103 |
+| Lines | 24,781 | **1,766** | **14×** |
+| CSV | 66,461 | **3,696** | **18×** |
 
-In this workload, callbacks were approximately **14 times faster for lines** and **18 times faster for CSV values**, with fewer allocations. These ratios describe the implementations and input in this repository; hardware, buffering, batch size, and work performed by the consumer can change the result.
+Fetch also uses less memory and fewer allocations:
+
+| Workload | Chan bytes/op | Fetch bytes/op | Chan allocs/op | Fetch allocs/op |
+| --- | ---: | ---: | ---: | ---: |
+| Lines | 4,432 | **4,144** | 7 | **2** |
+| CSV | 7,146 | **6,568** | 113 | **103** |
+
+Speedups are rounded and describe the implementations and input in this repository; hardware, buffering, batch size, and work performed by the consumer can change the result.
 
 ## Run the benchmarks
-
-Use Go 1.22 or newer. The benchmarks use integer range loops (`for x := range 100`), introduced in Go 1.22.
 
 ```sh
 git clone https://github.com/denisskin/disusechan.git
