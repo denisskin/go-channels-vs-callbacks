@@ -1,4 +1,4 @@
-# Disuse chan
+# Stop Using Go Channels for Everything
 
 Channels are useful for coordinating concurrent work, but they come with a cost. When a caller simply needs to read and process a sequence of values, a callback or a reader interface can make the API simpler and faster.
 
@@ -53,8 +53,8 @@ Speedups are rounded and describe the implementations and input in this reposito
 ## Run the benchmarks
 
 ```sh
-git clone https://github.com/denisskin/disusechan.git
-cd disusechan
+git clone https://github.com/denisskin/go-channels-vs-callbacks.git
+cd go-channels-vs-callbacks
 go test -run '^$' -bench . -benchmem -count=3
 ```
 

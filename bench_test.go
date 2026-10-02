@@ -1,4 +1,4 @@
-package disusechan
+package channelcallbacks
 
 import (
 	"bytes"
