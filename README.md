@@ -18,6 +18,10 @@ func DataChannel() (<-chan Data, <-chan error)
 
 The caller needs to receive values, handle errors, and detect when the producer finishes. Each item also requires communication between goroutines.
 
+There is also a lifecycle cost. If the consumer returns early and stops reading, the producer can remain blocked on its next send forever. That leaks a goroutine and can keep the data it references in memory. The channel implementations in this repository have no cancellation mechanism, so callers must consume both data and errors until completion.
+
+Closing the data channel from the consumer is not a solution: the producer normally owns closing it, and sending on a closed channel panics. A robust channel API needs an explicit cancellation mechanism, such as a context or a separate done channel, which the producer checks while sending. The consumer must signal cancellation when it stops early, and the producer must respond. Both sides now share responsibility for cleanup. See [Go's guide to pipelines and cancellation](https://go.dev/blog/pipelines#stopping-short).
+
 ### ✅ Good: a direct callback
 
 A callback-based API keeps reading and processing in the same goroutine:
