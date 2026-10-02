@@ -2,13 +2,20 @@ package disusechan
 
 import (
 	"bytes"
-	_ "embed"
+	"fmt"
 	"io"
+	"math"
 	"testing"
 )
 
-//go:embed test-data.csv
-var testData []byte
+var testData = func() []byte {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteString("x,y\n")
+	for x := range 100 {
+		_, _ = fmt.Fprintf(buf, "%d,%.6f\n", x, math.Sin(float64(x)))
+	}
+	return buf.Bytes()
+}()
 
 func newTestReader() io.Reader {
 	return bytes.NewBuffer(testData)
