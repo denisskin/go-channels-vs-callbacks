@@ -6,6 +6,10 @@ This repository compares two ways to process the same input in Go: a goroutine t
 
 ## Choose an API that fits the work
 
+For sequential processing:
+
+### ❌ Bad: a channel for every item
+
 A channel-based API moves data between a producer goroutine and its consumer:
 
 ```go
@@ -13,6 +17,8 @@ func DataChannel() (<-chan Data, <-chan error)
 ```
 
 The caller needs to receive values, handle errors, and detect when the producer finishes. Each item also requires communication between goroutines.
+
+### ✅ Good: a direct callback
 
 A callback-based API keeps reading and processing in the same goroutine:
 
@@ -30,7 +36,7 @@ The benchmarks compare line reading and simple comma-separated value splitting. 
 
 Measured on an Apple M2 with Go 1.27.0, macOS (`darwin/arm64`), and `GOMAXPROCS=8`. Times below are the median of three runs; memory figures are per operation.
 
-| Workload | Chan (ns/op) | Fetch (ns/op) | Fetch speedup |
+| Workload | ❌ Chan (ns/op) | ✅ Fetch (ns/op) | Fetch speedup |
 | --- | ---: | ---: | ---: |
 | Lines | 24,781 | **1,766** | **14×** |
 | CSV | 66,461 | **3,696** | **18×** |
